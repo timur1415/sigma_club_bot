@@ -10,11 +10,13 @@ from telegram.ext import (
 
 from config.config import TOKEN
 
-from start import start
+from handlers.common_handler import start
 
 from config.states import MAIN_MENU
 
-from main_work.join import join
+from handlers.common_handler import join
+
+from handlers.payment_handler import pay
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -29,7 +31,9 @@ if __name__ == "__main__":
         entry_points=[CommandHandler("start", start)],
         states={
             MAIN_MENU: [
-                CallbackQueryHandler(join, 'join')
+                CallbackQueryHandler(join, 'join'),
+                CallbackQueryHandler(pay, 'pay'),
+                CallbackQueryHandler(start, 'sub')
             ]
         },
         fallbacks=[CommandHandler("start", start)]
