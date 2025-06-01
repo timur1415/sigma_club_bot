@@ -10,27 +10,77 @@ from yookassa import Payment
 
 
 async def pay(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
     print(Configuration.account_id)
     print(Configuration.secret_key)
 
-    payment = Payment.create(
+    payment_1 = Payment.create(
         {
-            "amount": {"value": "100.00", "currency": "RUB"},
+            "amount": {"value": "1500.00", "currency": "RUB"},
             "confirmation": {
                 "type": "redirect",
                 "return_url": "https://t.me/sigma_club_bot",
             },
             "capture": True,
-            "description": "Заказ №1",
+            "description": "подписка на месяц",
         },
         uuid.uuid4(),
     )
-    url = payment.confirmation.confirmation_url
+    url_1 = payment_1.confirmation.confirmation_url
 
-    keyboard = [[InlineKeyboardButton("оплатить", url=url)]]
+    payment_3 = Payment.create(
+        {
+            "amount": {"value": "4300.00", "currency": "RUB"},
+            "confirmation": {
+                "type": "redirect",
+                "return_url": "https://t.me/sigma_club_bot",
+            },
+            "capture": True,
+            "description": "подписка на 3 месяца",
+        },
+        uuid.uuid4(),
+    )
+    url_3 = payment_3.confirmation.confirmation_url
+
+    payment_6 = Payment.create(
+        {
+            "amount": {"value": "8500.00", "currency": "RUB"},
+            "confirmation": {
+                "type": "redirect",
+                "return_url": "https://t.me/sigma_club_bot",
+            },
+            "capture": True,
+            "description": "подписка на 6 месяцев",
+        },
+        uuid.uuid4(),
+    )
+    url_6 = payment_6.confirmation.confirmation_url
+
+    payment_12 = Payment.create(
+        {
+            "amount": {"value": "16500.00", "currency": "RUB"},
+            "confirmation": {
+                "type": "redirect",
+                "return_url": "https://t.me/sigma_club_bot",
+            },
+            "capture": True,
+            "description": "подписка на 12 месяцев",
+        },
+        uuid.uuid4(),
+    )
+    url_12 = payment_12.confirmation.confirmation_url
+
+    keyboard = [[InlineKeyboardButton("1 месяц - 1500р", url=url_1)],
+                [InlineKeyboardButton('3 месяца - 4300р', url = url_3)],
+                [InlineKeyboardButton('6 месяцев - 8500р', url=url_6)],
+                [InlineKeyboardButton('12 месяцев - 16500р', url=url_12)]
+                ]
     
-    await context.bot.send_message(
+    await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        text="давай деньги",
+        photo= open('photo/rich_hasbik.png', 'rb'),
+        caption="давай деньги",
         reply_markup=InlineKeyboardMarkup(keyboard),
     )
