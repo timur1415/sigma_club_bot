@@ -2,11 +2,16 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ContextTypes,
 )
+
+from datetime import timedelta
+
 from config.config import Configuration
 
 import uuid
 
 from yookassa import Payment
+
+from handlers.jobs import check_payment
 
 
 async def pay(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -72,15 +77,29 @@ async def pay(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     url_12 = payment_12.confirmation.confirmation_url
 
-    keyboard = [[InlineKeyboardButton("1 месяц - 1500р", url=url_1)],
-                [InlineKeyboardButton('3 месяца - 4300р', url = url_3)],
-                [InlineKeyboardButton('6 месяцев - 8500р', url=url_6)],
-                [InlineKeyboardButton('12 месяцев - 16500р', url=url_12)]
-                ]
-    
+    keyboard = [
+        [InlineKeyboardButton("1 месяц - 1500р", url=url_1)],
+        [InlineKeyboardButton("3 месяца - 4300р", url=url_3)],
+        [InlineKeyboardButton("6 месяцев - 8500р", url=url_6)],
+        [InlineKeyboardButton("12 месяцев - 16500р", url=url_12)],
+    ]
+
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        photo= open('photo/rich_hasbik.png', 'rb'),
+        photo=open("photo/rich_hasbik.png", "rb"),
         caption="давай деньги",
         reply_markup=InlineKeyboardMarkup(keyboard),
+    )
+
+    context.job_queue.run_once(
+        check_payment,
+        timedelta(seconds=30),
+        data={
+            "payment_1": payment_1,
+            "payment_3": payment_3,
+            "payment_6": payment_6,
+            "payment_12": payment_12,
+        },
+        name=f'{update.effective_user.id}_payment',
+        user_id=update.effective_user.id       
     )
