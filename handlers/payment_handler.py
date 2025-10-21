@@ -1,7 +1,10 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import (
     ContextTypes,
+    
 )
+
+from config.config import WEBHOOK_URL
 
 from datetime import timedelta
 
@@ -78,7 +81,7 @@ async def pay(update: Update, context: ContextTypes.DEFAULT_TYPE):
     url_12 = payment_12.confirmation.confirmation_url
 
     keyboard = [
-        [InlineKeyboardButton("1 месяц - 1500р", url=url_1)],
+        [InlineKeyboardButton("1 месяц - 1500р", web_app=WebAppInfo(f'{WEBHOOK_URL}/app'))],
         [InlineKeyboardButton("3 месяца - 4300р", url=url_3)],
         [InlineKeyboardButton("6 месяцев - 8500р", url=url_6)],
         [InlineKeyboardButton("12 месяцев - 16500р", url=url_12)],
