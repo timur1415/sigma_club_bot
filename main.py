@@ -1,10 +1,8 @@
 from server.fastapi_init import init_fastapi_app
-import uvicorn 
-
+import uvicorn
 
 
 app = init_fastapi_app()
-
 
 
 if __name__ == "__main__":

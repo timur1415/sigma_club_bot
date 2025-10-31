@@ -9,11 +9,13 @@ from handlers.bot_init import create_bot_app
 from config.logger import logger
 
 from server.routes import telegram_router
+from server.routes import api_router
 
 
 def init_fastapi_app():
     app = FastAPI(lifespan=lifespan)
     app.include_router(telegram_router) 
+    app.include_router(api_router, prefix='/api')
     return app
 
 
