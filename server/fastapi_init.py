@@ -11,6 +11,9 @@ from config.logger import logger
 from server.routes import telegram_router
 from server.routes import api_router
 
+from db.database import engine, Base
+from db.models import User, Payment
+
 
 def init_fastapi_app():
     app = FastAPI(lifespan=lifespan)
@@ -18,10 +21,16 @@ def init_fastapi_app():
     app.include_router(api_router, prefix='/api')
     return app
 
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+        await conn.commit()
+    logger.info('ВСЕ ТАБЛИЦЫ УСПЕШНО СОЗДАНЫ')
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # что будет происходить при запуске
+    await init_db()
     bot_app = create_bot_app()
 
     app.state.bot_app = bot_app
