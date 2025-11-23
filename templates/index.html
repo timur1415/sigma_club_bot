@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Футуристичная форма</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://telegram.org/js/telegram-web-app.js?59"></script>"
+  <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+  <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
@@ -121,9 +122,27 @@
     function isEmail(value) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     }
-  function run_pay(){
-    alert('loh')
-  }
+  async function run_pay(){
+    let emailInput = document.getElementById('email-input')
+    const orderData = await createOrder(emailInput.value)
+    
+    const widget = new cp.CloudPayments();
+    widget.charge({
+          email: emailInput.value,
+          publicId: orderData.publicId,
+          description: "Оплата подписки",
+          amount: 500,
+          currency: "RUB",
+          accountId: emailInput.value,
+          invoiceId: orderData.invoiceId,
+          data: {
+            CloudPayments: {
+              recurrent: { interval: "Month", period: 1},
+            },
+          },
+        });
+      } 
+  
 
     const tg = window.Telegram.WebApp;
     tg.ready();
@@ -152,7 +171,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
       })
-      return res;
+      return await res.json();
     }
 
     let payButton = document.getElementById('payButton')

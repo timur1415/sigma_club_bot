@@ -8,8 +8,7 @@ from contextlib import asynccontextmanager
 from handlers.bot_init import create_bot_app
 from config.logger import logger
 
-from server.routes import telegram_router
-from server.routes import api_router
+from server.routes import telegram_router, api_router, payment_router
 
 from db.database import engine, Base
 from db.models import User, Payment
@@ -19,6 +18,7 @@ def init_fastapi_app():
     app = FastAPI(lifespan=lifespan)
     app.include_router(telegram_router) 
     app.include_router(api_router, prefix='/api')
+    app.include_router(payment_router, prefix='/cp')
     return app
 
 async def init_db():
