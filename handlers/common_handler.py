@@ -3,12 +3,17 @@ from telegram.ext import (
     ContextTypes,
 )
 
+from db.users_crud import create_user, get_user
+
 from tools.sup_func import is_channel_subscribed
 
 from config.states import MAIN_MENU
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = await get_user(update.effective_user.id)
+    if not user:
+        user = await create_user(update.effective_user.id, update.effective_user.username)
     tgk_keyboard = [
         [InlineKeyboardButton("подпишись на тгк", url="https://t.me/timik328")],
         [InlineKeyboardButton("я подписался", callback_data="sub")],

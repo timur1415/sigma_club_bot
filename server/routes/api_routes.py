@@ -7,16 +7,18 @@ from config.logger import logger
 from pydantic import BaseModel 
 import uuid 
 from config.config import CP_PUBLIC_ID
+from db.users_crud import add_email
 
 router = APIRouter()
 
 class OrderRequest(BaseModel):
     email: str
+    telegram_id: int
 
 
 @router.post('/order/')
 async def create_order(request: OrderRequest):
     invoice_id = uuid.uuid4()
     logger.info(invoice_id)
-    email = request.email
+    await add_email(request.telegram_id, request.email)
     return JSONResponse({'publicId': CP_PUBLIC_ID, 'invoiceId': str(invoice_id)})
