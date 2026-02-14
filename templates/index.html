@@ -4,186 +4,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Футуристичная форма</title>
+  <title>Форма оплаты</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
   <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
+  <style>
     body {
-      background: radial-gradient(circle at top, #1a002b, #2a004a, #3c006a);
-      color: #d28cff;
-      font-family: 'Orbitron', sans-serif;
-      height: 100vh;
+      background: #f6f6f8;
+      font-family: system-ui, sans-serif;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      text-transform: uppercase;
-      letter-spacing: 4px;
-      text-shadow: 0 0 10px #b76eff, 0 0 20px #d28cff;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        text-shadow: 0 0 10px #b76eff, 0 0 20px #d28cff;
-      }
-
-      50% {
-        text-shadow: 0 0 30px #d28cff, 0 0 60px #e8b3ff;
-      }
+      padding: 20px;
+      color: #333;
     }
 
     .form-container {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(210, 140, 255, 0.3);
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(210, 140, 255, 0.3);
-      padding: 40px 30px;
-      width: 320px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 30px 25px;
+      width: 100%;
+      max-width: 340px;
       text-align: center;
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease-in-out;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      animation: fadeIn 0.4s ease;
     }
 
-    .form-container:hover {
-      box-shadow: 0 0 60px rgba(210, 140, 255, 0.5);
-      transform: scale(1.03);
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      font-weight: 600;
     }
 
     .email-input {
-      font-size: 1.2rem;
-      border: none;
-      background: transparent;
-      border-bottom: 2px solid #d28cff;
-      color: #e8b3ff;
+      font-size: 1.1rem;
       width: 100%;
-      text-align: center;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
       outline: none;
-      transition: 0.3s;
+      transition: 0.2s;
     }
 
     .email-input:focus {
-      border-bottom: 2px solid #ffb3ff;
-      box-shadow: 0 0 10px #ffb3ff;
-    }
-
-    .btn-futuristic {
-      background: linear-gradient(90deg, #b76eff, #ffb3ff);
-      color: #1a001f;
-      border: none;
-      font-weight: bold;
-      border-radius: 50px;
-      padding: 10px 35px;
-      margin-top: 25px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      box-shadow: 0 0 15px #b76eff;
-      transition: all 0.3s ease-in-out;
-    }
-
-    .btn-futuristic:hover {
-      box-shadow: 0 0 30px #ffb3ff;
-      transform: translateY(-3px);
-    }
-
-    #crutoy {
-      width: 100px;
-      height: 100px;
-      background-color: red;
-      transition: 1s ease;
-    }
-
-    .crutoy {
-      transform: scale(1.5) translateX(100px) rotate(360deg);
+      border-color: #6c63ff;
+      box-shadow: 0 0 4px rgba(108, 99, 255, 0.4);
     }
   </style>
 </head>
 
 <body>
+
   <div class="form-container">
-    <h1>Дай мне денег</h1>
-
+    <h1>Оплата подписки</h1>
     <input class="email-input" id="email-input" type="email" placeholder="Введите email">
-
-
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
   <script>
     function isEmail(value) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     }
-  async function run_pay(){
-    let emailInput = document.getElementById('email-input')
-    const orderData = await createOrder(emailInput.value)
-    
-    const widget = new cp.CloudPayments();
-    widget.charge({
-          email: emailInput.value,
-          publicId: orderData.publicId,
-          description: "Оплата подписки",
-          amount: 500,
-          currency: "RUB",
-          accountId: emailInput.value,
-          invoiceId: orderData.invoiceId,
-          data: {
-            CloudPayments: {
-              recurrent: { interval: "Month", period: 1},
-            },
+
+    async function run_pay() {
+      let emailInput = document.getElementById('email-input');
+      const orderData = await createOrder(emailInput.value);
+
+      const widget = new cp.CloudPayments();
+      widget.charge({
+        email: emailInput.value,
+        publicId: orderData.publicId,
+        description: "Оплата подписки",
+        amount: 500,
+        currency: "RUB",
+        accountId: emailInput.value,
+        invoiceId: orderData.invoiceId,
+        data: {
+          CloudPayments: {
+            recurrent: { interval: "Month", period: 1 },
           },
-        });
-      } 
-  
+        },
+      });
+    }
 
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
-    const email_input = document.getElementById("email-input") 
+
+    const email_input = document.getElementById("email-input");
+
     email_input.addEventListener('input', (e) => {
-      const email = e.target.value
-      if (isEmail(email)){
-        tg.MainButton.enable()
-        tg.MainButton.show()
-        tg.MainButton.onClick(run_pay)
+      const email = e.target.value;
+      if (isEmail(email)) {
+        tg.MainButton.enable();
+        tg.MainButton.setText("Оплатить");
+        tg.MainButton.show();
+        tg.MainButton.onClick(run_pay);
+      } else {
+        tg.MainButton.disable();
+        tg.MainButton.hide();
       }
-      else{
-        tg.MainButton.disable()
-        tg.MainButton.hide()
-      }
-    })
-
-    
-
+    });
 
     async function createOrder(email) {
-      console.log(1)
       const res = await fetch('/api/order/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, telegram_id: tg.initDataUnsafe.user.id})
-      })
+        body: JSON.stringify({ email: email, telegram_id: tg.initDataUnsafe.user.id, subscription_type: '1_month_rf'})
+      });
       return await res.json();
     }
-
-    let payButton = document.getElementById('payButton')  
-
-    payButton.addEventListener('click', async (e) => {
-      e.preventDefault()
-      let emailInput = document.getElementById('email-input')
-      const res = await createOrder(emailInput.value)
-      console.log(res)
-    })
-
   </script>
-</body>
 
+</body>
 </html>
