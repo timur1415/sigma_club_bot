@@ -23,3 +23,17 @@ async def create_payment(user_id, telegram_id, subscription_type, invoice_id, em
         await session.refresh(payment)
         return payment
 
+
+async def get_payment(invoice_id):
+    async with get_session() as session:
+        stmt = select(Payment).where(Payment.invoice_id == invoice_id)
+        result = await session.execute(stmt)
+        payment = result.scalars().first()
+        return payment
+
+async def update_payment(invoice_id, status):
+    async with get_session() as session:
+        stmt = update(Payment).where(Payment.invoice_id == invoice_id).values(status = status)
+        await session.execute(stmt)
+        await session.commit()
+        return await get_payment(invoice_id)

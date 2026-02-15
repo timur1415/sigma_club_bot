@@ -31,7 +31,8 @@ async def create_order(request: OrderRequest):
         user.id,
         request.telegram_id,
         request.subscription_type,
-        invoice_id,
+        str(invoice_id),
         request.email,
     )
+    logger.info(f'платёж создаётся для пользователя с id: {user.id}')
     return JSONResponse({"publicId": CP_PUBLIC_ID, "invoiceId": str(invoice_id)})

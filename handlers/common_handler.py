@@ -5,7 +5,7 @@ from telegram.ext import (
 
 from db.users_crud import create_user, get_user
 
-from tools.sup_func import is_channel_subscribed
+# from tools.sup_func import is_channel_subscribed
 
 from config.states import MAIN_MENU
 
@@ -14,10 +14,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = await get_user(update.effective_user.id)
     if not user:
         user = await create_user(update.effective_user.id, update.effective_user.username)
-    tgk_keyboard = [
-        [InlineKeyboardButton("подпишись на тгк", url="https://t.me/timik328")],
-        [InlineKeyboardButton("я подписался", callback_data="sub")],
-    ]
+    # tgk_keyboard = [
+    #     [InlineKeyboardButton("подпишись на тгк", url="https://t.me/timik328")],
+    #     [InlineKeyboardButton("я подписался", callback_data="sub")],
+    # ]
 
     keyboard = [
         [InlineKeyboardButton("✅вступить в клуб✅", callback_data="join")],
@@ -25,20 +25,20 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("💬отзывы💬", url="https://t.me/reviews1264")],
     ]
 
-    member = await is_channel_subscribed(context, update.effective_user.id)
-    if member == True:
-        await context.bot.send_photo(
+    # member = await is_channel_subscribed(context, update.effective_user.id)
+    # if member == True:
+    await context.bot.send_photo(
             chat_id=update.effective_chat.id,
             photo=open("photo/hasbik.png", "rb"),
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
-        return MAIN_MENU
-    else:
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text="❌ты не подписан на тгк❌",
-            reply_markup=InlineKeyboardMarkup((tgk_keyboard)),
-        )
+    return MAIN_MENU
+    # else:
+    #     await context.bot.send_message(
+    #         chat_id=update.effective_chat.id,
+    #         text="❌ты не подписан на тгк❌",
+    #         reply_markup=InlineKeyboardMarkup((tgk_keyboard)),
+    #     )
 
 
 async def join(update: Update, context: ContextTypes.DEFAULT_TYPE):
