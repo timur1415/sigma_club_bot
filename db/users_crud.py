@@ -23,3 +23,10 @@ async def add_email(telegram_id, email):
         await session.execute(stmt)
         await session.commit()
         return await get_user(telegram_id)
+    
+async def update_user_substatus(telegram_id, sub_status):
+    async with get_session() as session:
+        stmt = update(User).where(User.telegram_id == telegram_id).values(sub_status = sub_status)
+        await session.execute(stmt)
+        await session.commit()
+        return await get_user(telegram_id)

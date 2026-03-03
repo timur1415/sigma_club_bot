@@ -15,3 +15,4 @@ SECRET_TOKEN = os.getenv("SECRET_TOKEN", '123')
 DATABASE_URL = os.getenv("DATABASE_URL")
 DATABASE_ECHO = True if os.getenv("DATABASE_ECHO") == "True" else False
 CP_PUBLIC_ID = os.getenv('CP_PUBLIC_ID')
+GROUP_URL = os.getenv('GROUP_URL')

@@ -7,6 +7,7 @@ from telegram.ext import (
     CommandHandler,
     CallbackQueryHandler,
     PicklePersistence,
+    ChatJoinRequestHandler
 )
 
 from config.config import TOKEN
@@ -21,6 +22,7 @@ from handlers.payment_handler import pay
 
 from fastapi import FastAPI, Request
 
+from handlers.chat_join import chat_join
 
 def create_bot_app():
     persistence = PicklePersistence(filepath="club_bot")
@@ -43,6 +45,7 @@ def create_bot_app():
     )
 
 
+    telegram_app.add_handler(ChatJoinRequestHandler(chat_join))
     telegram_app.add_handler(conv_hadler)
 
     return telegram_app
