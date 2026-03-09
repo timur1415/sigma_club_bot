@@ -6,30 +6,35 @@ from fastapi.responses import FileResponse
 from config.logger import logger
 from pydantic import BaseModel
 import uuid
-from config.config import CP_PUBLIC_ID
+from config.config import CP_PUBLIC_ID, TOKEN
 from db.users_crud import add_email
 from db.payment_crud import create_payment
+from tools.validate_init_data import validate_init_data
 
 router = APIRouter()
 
 
 class OrderRequest(BaseModel):
     email: str
-    telegram_id: int
     subscription_type: str
+    init_data: str
 
 
 @router.post("/order/")
 async def create_order(request: OrderRequest):
     invoice_id = uuid.uuid4()
     logger.info(invoice_id)
+    
+    logger.info(request.init_data)
+    user_data_dict = validate_init_data(request.init_data, TOKEN)
+    logger.info(user_data_dict)
     user = await add_email(
-        request.telegram_id,
+        user_data_dict['id'],
         request.email,
     )
     await create_payment(
         user.id,
-        request.telegram_id,
+        user_data_dict['id'],
         request.subscription_type,
         str(invoice_id),
         request.email,
