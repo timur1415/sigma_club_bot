@@ -149,6 +149,8 @@
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
+  const params = new URLSearchParams(window.location.search);
+  const subStatus = params.get("sub_status");
 
     const email_input = document.getElementById("email-input");
 
@@ -172,7 +174,7 @@
         body: JSON.stringify({
           email: email,
           init_data: tg.initData,
-          subscription_type: '1_month_rf'
+          subscription_type: subStatus
         })
       });
       return await res.json();

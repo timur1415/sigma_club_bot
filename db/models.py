@@ -13,8 +13,8 @@ class User(Base):
     username = Column(String, nullable=True)
     email = Column(String, nullable=True)
     created_at = Column(DateTime, default=func.now())
-    sub_end_date = Column(DateTime, nullable=True)
-    sub_ban_date = Column(DateTime, nullable=True)
+    sub_end_date = Column(DateTime(timezone=True), nullable=True)
+    sub_ban_date = Column(DateTime(timezone=True), nullable=True)
     sub_status = Column(String, default='inactive')  # active, expired, banned, inactive
     sub_type = Column(String, nullable=True)  # 1_month_rf, 3_month_rf, etc.
     
