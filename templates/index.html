@@ -129,21 +129,83 @@
       let emailInput = document.getElementById('email-input');
       const orderData = await createOrder(emailInput.value);
 
-      const widget = new cp.CloudPayments();
-      widget.charge({
-        email: emailInput.value,
-        publicId: orderData.publicId,
-        description: "Оплата подписки",
-        amount: 500,
-        currency: "RUB",
-        accountId: emailInput.value,
-        invoiceId: orderData.invoiceId,
-        data: {
-          CloudPayments: {
-            recurrent: { interval: "Month", period: 1 },
-          },
+const params = new URLSearchParams(window.location.search);
+const subStatus = params.get("sub_status"); // "1_month_rf", "3_month_rf" и т.д.
+
+function chargeSubscription(subStatus) {
+  const widget = new cp.CloudPayments();
+
+  if (subStatus === '1_month_rf') {
+    widget.charge({
+      email: emailInput.value,
+      publicId: orderData.publicId,
+      description: "Оплата подписки",
+      amount: 500,
+      currency: "RUB",
+      accountId: emailInput.value,
+      invoiceId: orderData.invoiceId,
+      data: {
+        CloudPayments: {
+          recurrent: { interval: "Month", period: 1 },
         },
-      });
+      },
+    });
+  }
+
+  if (subStatus === '3_month_rf') {
+    widget.charge({
+      email: emailInput.value,
+      publicId: orderData.publicId,
+      description: "Оплата подписки",
+      amount: 4300,
+      currency: "RUB",
+      accountId: emailInput.value,
+      invoiceId: orderData.invoiceId,
+      data: {
+        CloudPayments: {
+          recurrent: { interval: "Month", period: 3 },
+        },
+      },
+    });
+  }
+
+  if (subStatus === '6_month_rf') {
+    widget.charge({
+      email: emailInput.value,
+      publicId: orderData.publicId,
+      description: "Оплата подписки",
+      amount: 8500,
+      currency: "RUB",
+      accountId: emailInput.value,
+      invoiceId: orderData.invoiceId,
+      data: {
+        CloudPayments: {
+          recurrent: { interval: "Month", period: 6 },
+        },
+      },
+    });
+  }
+
+  if (subStatus === '12_month_rf') {
+    widget.charge({
+      email: emailInput.value,
+      publicId: orderData.publicId,
+      description: "Оплата подписки",
+      amount: 16500,
+      currency: "RUB",
+      accountId: emailInput.value,
+      invoiceId: orderData.invoiceId,
+      data: {
+        CloudPayments: {
+          recurrent: { interval: "Month", period: 12 },
+        },
+      },
+    });
+  }
+}
+
+// вызываем функцию
+chargeSubscription(subStatus);
     }
 
     const tg = window.Telegram.WebApp;

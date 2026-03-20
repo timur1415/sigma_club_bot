@@ -34,7 +34,7 @@ async def add_email(telegram_id, email):
         return await get_user(telegram_id)
 
 
-async def update_user_substatus(telegram_id, sub_status):
+async def update_user_substatus(telegram_id, sub_status, subscription_type):
     async with get_session() as session:
         stmt = select(User).where(User.telegram_id == telegram_id)
         result = await session.execute(stmt)
@@ -42,7 +42,17 @@ async def update_user_substatus(telegram_id, sub_status):
         user.sub_status = sub_status
         if sub_status == "active":
             now = datetime.now(UTC)
-            user.sub_end_date = now + relativedelta(months=1)
-            user.sub_ban_date = now + relativedelta(months=1, days=2)
+            if subscription_type == "1_month_rf":
+                user.sub_end_date = now + relativedelta(months=1)
+                user.sub_ban_date = now + relativedelta(months=1, days=2)
+            elif subscription_type == "3_month_rf":
+                user.sub_end_date = now + relativedelta(months=3)
+                user.sub_ban_date = now + relativedelta(months=3, days=2)
+            elif subscription_type == "6_month_rf":
+                user.sub_end_date = now + relativedelta(months=6)
+                user.sub_ban_date = now + relativedelta(months=6, days=2)
+            elif subscription_type == "12_month_rf":
+                user.sub_end_date = now + relativedelta(months=12)
+                user.sub_ban_date = now + relativedelta(months=1, days=2)
         await session.commit()
         return await get_user(telegram_id)
