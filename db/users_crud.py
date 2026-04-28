@@ -56,3 +56,16 @@ async def update_user_substatus(telegram_id, sub_status, subscription_type):
                 user.sub_ban_date = now + relativedelta(months=1, days=2)
         await session.commit()
         return await get_user(telegram_id)
+    
+async def get_all_debtors():
+    async with get_session() as session:
+        stmt = select(User).where(User.sub_ban_date < datetime.now(UTC), User.sub_status == 'active')
+        result = await session.execute(stmt)
+        users = result.scalars().all()
+        return users
+    
+async def update_all_debtors():
+    async with get_session() as session:
+        stmt = update(User).where(User.sub_ban_date < datetime.now(UTC), User.sub_status == 'active').values(sub_status='expired')
+        await session.execute(stmt)
+        await session.commit()

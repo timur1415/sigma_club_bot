@@ -4,6 +4,7 @@ from telegram.ext import (
 )
 
 from db.users_crud import create_user, get_user
+from handlers.jobs import job1
 
 # from tools.sup_func import is_channel_subscribed
 
@@ -32,6 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             photo=open("photo/hasbik.png", "rb"),
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
+    context.job_queue.run_once(job1, when=5, chat_id=update.effective_chat.id, data={'name':update.effective_user.first_name})
     return MAIN_MENU
     # else:
     #     await context.bot.send_message(

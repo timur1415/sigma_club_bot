@@ -10,5 +10,6 @@
             "database": "db",
             "username": "user"
         }
-    ]
+    ],
+    "makefile.configureOnOpen": true
 }

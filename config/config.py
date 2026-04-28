@@ -16,3 +16,5 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 DATABASE_ECHO = True if os.getenv("DATABASE_ECHO") == "True" else False
 CP_PUBLIC_ID = os.getenv('CP_PUBLIC_ID')
 GROUP_URL = os.getenv('GROUP_URL')
+
+DEBUG = True if os.getenv("DEBUG") == "True" else False

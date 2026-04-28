@@ -22,7 +22,9 @@ async def first_payment(request: Request):
         payment = await get_payment(data["InvoiceId"])
         logger.info(payment)
         await update_payment(data["InvoiceId"], "completed")
-        await update_user_substatus(payment.telegram_id, 'active', payment.subscription_type)
+        await update_user_substatus(
+            payment.telegram_id, "active", payment.subscription_type
+        )
         logger.info(payment.subscription_type)
         await request.app.state.bot_app.bot.send_message(
             chat_id=payment.telegram_id, text="вы успешно оплатили", reply_markup=markup

@@ -1,247 +1,265 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Форма оплаты</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Форма оплаты</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+    <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
 
-  <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
-  <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
-
-  <style>
-    :root {
-      --bg1: #0f0f1a;
-      --bg2: #1a1333;
-      --card: rgba(33, 7, 148, 0.65);
-      --text: #ffffff;
-      --muted: #b3b3c6;
-      --border: rgba(255, 255, 255, 0.08);
-      --accent1: #7c3aed;
-      --accent2: #06b6d4;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      color: var(--text);
-      background: radial-gradient(circle at 20% 30%, #1e1b4b, transparent 40%),
-                  radial-gradient(circle at 80% 70%, #0e7490, transparent 40%),
-                  linear-gradient(135deg, var(--bg1), var(--bg2));
-      animation: backgroundMove 12s ease infinite alternate;
-    }
-
-    @keyframes backgroundMove {
-      0% { background-position: 0% 0%, 100% 100%, 0% 0%; }
-      100% { background-position: 20% 10%, 80% 90%, 0% 0%; }
-    }
-
-    .form-container {
-      background: var(--card);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 22px;
-      padding: 42px 30px;
-      width: 100%;
-      max-width: 360px;
-      text-align: center;
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 60px rgba(124, 58, 237, 0.25);
-      animation: fadeIn 0.6s ease;
-      transition: transform 0.4s ease;
-    }
-
-    .form-container:hover {
-      transform: translateY(-4px);
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.98);
+    <style>
+      :root {
+        --bg1: #0f0f1a;
+        --bg2: #1a1333;
+        --card: rgba(33, 7, 148, 0.65);
+        --text: #ffffff;
+        --muted: #b3b3c6;
+        --border: rgba(255, 255, 255, 0.08);
+        --accent1: #7c3aed;
+        --accent2: #06b6d4;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
+
+      * {
+        box-sizing: border-box;
       }
-    }
 
-    h1 {
-      font-size: 1.4rem;
-      font-weight: 600;
-      margin-bottom: 28px;
-      letter-spacing: -0.3px;
-      background: linear-gradient(90deg, var(--accent1), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .email-input {
-      font-size: 1rem;
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      outline: none;
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      transition: all 0.25s ease;
-    }
-
-    .email-input::placeholder {
-      color: var(--muted);
-    }
-
-    .email-input:focus {
-      border: 1px solid transparent;
-      background: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 0 0 2px var(--accent1),
-                  0 0 20px rgba(124, 58, 237, 0.4);
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="form-container">
-    <h1>Оплата подписки</h1>
-    <input class="email-input" id="email-input" type="email" placeholder="you@example.com">
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script>
-    function isEmail(value) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    }
-
-    async function run_pay() {
-      let emailInput = document.getElementById('email-input');
-      const orderData = await createOrder(emailInput.value);
-
-const params = new URLSearchParams(window.location.search);
-const subStatus = params.get("sub_status"); // "1_month_rf", "3_month_rf" и т.д.
-
-function chargeSubscription(subStatus) {
-  const widget = new cp.CloudPayments();
-
-  if (subStatus === '1_month_rf') {
-    widget.charge({
-      email: emailInput.value,
-      publicId: orderData.publicId,
-      description: "Оплата подписки",
-      amount: 500,
-      currency: "RUB",
-      accountId: emailInput.value,
-      invoiceId: orderData.invoiceId,
-      data: {
-        CloudPayments: {
-          recurrent: { interval: "Month", period: 1 },
-        },
-      },
-    });
-  }
-
-  if (subStatus === '3_month_rf') {
-    widget.charge({
-      email: emailInput.value,
-      publicId: orderData.publicId,
-      description: "Оплата подписки",
-      amount: 4300,
-      currency: "RUB",
-      accountId: emailInput.value,
-      invoiceId: orderData.invoiceId,
-      data: {
-        CloudPayments: {
-          recurrent: { interval: "Month", period: 3 },
-        },
-      },
-    });
-  }
-
-  if (subStatus === '6_month_rf') {
-    widget.charge({
-      email: emailInput.value,
-      publicId: orderData.publicId,
-      description: "Оплата подписки",
-      amount: 8500,
-      currency: "RUB",
-      accountId: emailInput.value,
-      invoiceId: orderData.invoiceId,
-      data: {
-        CloudPayments: {
-          recurrent: { interval: "Month", period: 6 },
-        },
-      },
-    });
-  }
-
-  if (subStatus === '12_month_rf') {
-    widget.charge({
-      email: emailInput.value,
-      publicId: orderData.publicId,
-      description: "Оплата подписки",
-      amount: 16500,
-      currency: "RUB",
-      accountId: emailInput.value,
-      invoiceId: orderData.invoiceId,
-      data: {
-        CloudPayments: {
-          recurrent: { interval: "Month", period: 12 },
-        },
-      },
-    });
-  }
-}
-
-// вызываем функцию
-chargeSubscription(subStatus);
-    }
-
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-  const params = new URLSearchParams(window.location.search);
-  const subStatus = params.get("sub_status");
-
-    const email_input = document.getElementById("email-input");
-
-    email_input.addEventListener('input', (e) => {
-      const email = e.target.value;
-      if (isEmail(email)) {
-        tg.MainButton.enable();
-        tg.MainButton.setText("Оплатить");
-        tg.MainButton.show();
-        tg.MainButton.onClick(run_pay);
-      } else {
-        tg.MainButton.disable();
-        tg.MainButton.hide();
+      body {
+        margin: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 20% 30%, #1e1b4b, transparent 40%),
+          radial-gradient(circle at 80% 70%, #0e7490, transparent 40%),
+          linear-gradient(135deg, var(--bg1), var(--bg2));
+        animation: backgroundMove 12s ease infinite alternate;
       }
-    });
 
-    async function createOrder(email) {
-      const res = await fetch('/api/order/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email,
-          init_data: tg.initData,
-          subscription_type: subStatus
-        })
+      @keyframes backgroundMove {
+        0% {
+          background-position:
+            0% 0%,
+            100% 100%,
+            0% 0%;
+        }
+        100% {
+          background-position:
+            20% 10%,
+            80% 90%,
+            0% 0%;
+        }
+      }
+
+      .form-container {
+        background: var(--card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 22px;
+        padding: 42px 30px;
+        width: 100%;
+        max-width: 360px;
+        text-align: center;
+        border: 1px solid var(--border);
+        box-shadow: 0 20px 60px rgba(124, 58, 237, 0.25);
+        animation: fadeIn 0.6s ease;
+        transition: transform 0.4s ease;
+      }
+
+      .form-container:hover {
+        transform: translateY(-4px);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      h1 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 28px;
+        letter-spacing: -0.3px;
+        background: linear-gradient(90deg, var(--accent1), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .email-input {
+        font-size: 1rem;
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        outline: none;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        transition: all 0.25s ease;
+      }
+
+      .email-input::placeholder {
+        color: var(--muted);
+      }
+
+      .email-input:focus {
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.12);
+        box-shadow:
+          0 0 0 2px var(--accent1),
+          0 0 20px rgba(124, 58, 237, 0.4);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="form-container">
+      <h1>Оплата подписки</h1>
+      <input
+        class="email-input"
+        id="email-input"
+        type="email"
+        placeholder="you@example.com"
+      />
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      function isEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      }
+
+      async function run_pay() {
+        let emailInput = document.getElementById("email-input");
+        const orderData = await createOrder(emailInput.value);
+
+        const params = new URLSearchParams(window.location.search);
+        const subStatus = params.get("sub_status"); // "1_month_rf", "3_month_rf" и т.д.
+
+        function chargeSubscription(subStatus) {
+          const widget = new cp.CloudPayments();
+
+          if (subStatus === "1_month_rf") {
+            widget.charge({
+              email: emailInput.value,
+              publicId: orderData.publicId,
+              description: "Оплата подписки",
+              amount: 500,
+              currency: "RUB",
+              accountId: emailInput.value,
+              invoiceId: orderData.invoiceId,
+              data: {
+                CloudPayments: {
+                  recurrent: { interval: "Month", period: 1 },
+                },
+              },
+            });
+          }
+
+          if (subStatus === "3_month_rf") {
+            widget.charge({
+              email: emailInput.value,
+              publicId: orderData.publicId,
+              description: "Оплата подписки",
+              amount: 4300,
+              currency: "RUB",
+              accountId: emailInput.value,
+              invoiceId: orderData.invoiceId,
+              data: {
+                CloudPayments: {
+                  recurrent: { interval: "Month", period: 3 },
+                },
+              },
+            });
+          }
+
+          if (subStatus === "6_month_rf") {
+            widget.charge({
+              email: emailInput.value,
+              publicId: orderData.publicId,
+              description: "Оплата подписки",
+              amount: 8500,
+              currency: "RUB",
+              accountId: emailInput.value,
+              invoiceId: orderData.invoiceId,
+              data: {
+                CloudPayments: {
+                  recurrent: { interval: "Month", period: 6 },
+                },
+              },
+            });
+          }
+
+          if (subStatus === "12_month_rf") {
+            widget.charge({
+              email: emailInput.value,
+              publicId: orderData.publicId,
+              description: "Оплата подписки",
+              amount: 16500,
+              currency: "RUB",
+              accountId: emailInput.value,
+              invoiceId: orderData.invoiceId,
+              data: {
+                CloudPayments: {
+                  recurrent: { interval: "Month", period: 12 },
+                },
+              },
+            });
+          }
+        }
+
+        // вызываем функцию
+        chargeSubscription(subStatus);
+      }
+
+      const tg = window.Telegram.WebApp;
+      tg.ready();
+      tg.expand();
+      const params = new URLSearchParams(window.location.search);
+      const subStatus = params.get("sub_status");
+
+      const email_input = document.getElementById("email-input");
+
+      email_input.addEventListener("input", (e) => {
+        const email = e.target.value;
+        if (isEmail(email)) {
+          tg.MainButton.enable();
+          tg.MainButton.setText("Оплатить");
+          tg.MainButton.show();
+          tg.MainButton.onClick(run_pay);
+        } else {
+          tg.MainButton.disable();
+          tg.MainButton.hide();
+        }
       });
-      return await res.json();
-    }
-  </script>
 
-</body>
+      async function createOrder(email) {
+        const res = await fetch("/api/order/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: email,
+            init_data: tg.initData,
+            subscription_type: subStatus,
+          }),
+        });
+        return await res.json();
+      }
+    </script>
+  </body>
 </html>
